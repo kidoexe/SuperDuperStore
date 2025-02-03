@@ -1,8 +1,19 @@
 class Solution:
-    def lengthOfLastWord(self, s: str) -> int:
-        words = s.strip().split()
-        return len(words[-1])
+    def majorityElement(self, nums: List[int]) -> int:
+        count = 0
+        x = None
         
-#მოკლედ რომ ვთქვათ strip-ს ვიყენბთ რომ ზედმეტი სპასები მოვშალოთ თუ არის, split-ს რომ დაყოს წინადადება სიტყვებად და შექმნას ლისთი ხოლო len(words[-1])-ს რომ ბოლო სიტყვა ამოიღოს ლისთიდან და დაითვალოს რამდენი ასოსგან შედგება :3333
+        for num in nums:
+            if count == 0:
+                x = num
+            count += (1 if num == x else -1)
+        
+        return x
+        
+# მოკლედ წერა მეზარება და გაკეთილის შემდეგ შემიძლია ავხსნა როგორ მუშაობს <3
+# :3
 
-#○( ＾皿＾)っ Hehehe…
+
+           
+
+            
