@@ -72,7 +72,7 @@ class DeteiledProductViewUpdate(APIView):
 
 class CartViewSet(ListModelMixin, CreateModelMixin, GenericAPIView):
     queryset = FavoriteProduct.objects.all()
-    serializer_class = FavoriteProductSerializer
+    serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
