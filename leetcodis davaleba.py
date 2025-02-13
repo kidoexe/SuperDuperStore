@@ -1,19 +1,7 @@
 class Solution:
-    def majorityElement(self, nums: List[int]) -> int:
-        count = 0
-        x = None
-        
-        for num in nums:
-            if count == 0:
-                x = num
-            count += (1 if num == x else -1)
-        
-        return x
-        
-# მოკლედ წერა მეზარება და გაკეთილის შემდეგ შემიძლია ავხსნა როგორ მუშაობს <3
-# :3
-
-
-           
-
-            
+    def isAnagram(self, s: str, t: str) -> bool:
+        sorted_s = sorted(s)
+        sorted_t = sorted(t)
+        return sorted_s == sorted_t
+    
+#radgab pirobashi ewerea rom ori sityva unda shegvedarebina ertmanets da gvepova anagrma aris tu are jer davaortire radgan anagramashi erti da igive asoebi gvxdeba xolo shemdeg ertmanets shevedare dasortilebulebi 
