@@ -1,6 +1,11 @@
 from rest_framework import serializers 
-from products.models import Review, Product, Cart, ProductTag , FavoriteProduct
+from products.models import Review, Product, Cart, ProductTag , FavoriteProduct, ProductImage
 
+class ProductTagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProductTag
+        fields = ['id', 'name']
 class ReviewSerializer(serializers.ModelSerializer):
     product_id = serializers.IntegerField(write_only=True)
 
@@ -22,12 +27,31 @@ class ReviewSerializer(serializers.ModelSerializer):
         product = Product.objects.get(id=validated_data.pop('product_id'))
         user = self.context['request'].user
         return Review.objects.create(product=product, user=user, **validated_data)
+    
 class ProductSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)
+    tag_ids = serializers.PrimaryKeyRelatedField(
+        source = 'tags',
+        queryset= ProductTag.objects.all(),
+        many = True,
+        write_only = True,
+    )
+    tags = ProductTagSerializer(many = True, write_only = True)
     class Meta:
         model = Product
         exclude = ['created_at', 'updated_at']
 
+    def create(self, validated_data):
+        tags = validated_data.pop('tags', [])
+        product = product.objects.create(**validated_data)   
+        product.tags.set(tags) 
+        return product
+    
+    def update(self, instance, validated_data):
+        tags = validated_data.pop('tags', None)
+        if tags is not None:
+            instance.tags.set(tags)
+        return super().update(instance, validated_data)
 
 class CartSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default = serializers.CurrentUserDefault())
@@ -52,12 +76,6 @@ class CartSerializer(serializers.ModelSerializer):
 
         return cart
 
-
-class ProductTagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductTag
-        fields = ['id', 'product', 'tag_name']
-
 class FavoriteProductSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default = serializers.CurrentUserDefault())
     Product_id = serializers.IntegerField(write_only = True)
@@ -69,7 +87,7 @@ class FavoriteProductSerializer(serializers.ModelSerializer):
 
     def validate_product_id(self, value):
         if not Product.objects.filter(id=value).exists():
-            raise serializers.ValidationError("given prduct_id doesnt exist")
+            raise serializers.ValidationError("given product_id doesnt exist")
         return value
     def create(self, validated_data):
         user = validated_data.pop('user')
@@ -82,35 +100,7 @@ class FavoriteProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("product with given id is already in favorites")
         return favorite_product
 
-
-
-# #class ReviewSerializer(serializers.ModelSerializer):
-#     product_id = serializers.IntegerField(write_only=True)
-
-#     class Meta:
-#         model = Review
-#         fields = ['id', 'product_id', 'content', 'rating']
-
-#     def validate_product_id(self, value):
-#         try:
-#             Product.objects.get(id=value)
-#         except Product.DoesNotExist:
-#             raise serializers.ValidationError("Invalid product_id. Product does not exist.")
-#         return value
-
-#     def validate_rating(self, value):
-#         if value < 1 or value > 5:
-#             raise serializers.ValidationError("Rating must be between 1 and 5.")
-#         return value
-
-#     def create(self, validated_data):
-#         product = Product.objects.get(id=validated_data['product_id'])
-#         user = self.context['request'].user
-
-#         review = Review.objects.create(
-#             product=product,
-#             user=user,
-#             content=validated_data['content'],
-#             rating=validated_data['rating'],
-#         )
-#         return review
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImage
+        fields = ['id', 'image', 'product']
