@@ -27,12 +27,7 @@ class ProductTagViewSet(ModelViewSet):
 
 class FavoriteProductViewSet(ModelViewSet):
     queryset = FavoriteProduct.objects.all()
-    serializer_class = FavoriteProductSerializer
+    serializer_class = CartSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post', 'delete']
+    
 
-class ProductImageViewSet(ModelViewSet):
-    queryset = ProductImage.objects.all()
-    serializer_class = ProductImageSerializer
-    permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post', 'delete']
