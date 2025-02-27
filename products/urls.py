@@ -1,20 +1,19 @@
 from django.urls import path, include
+from rest_framework.routers import SimpleRouter
 from products.views import *
 
+
+router = SimpleRouter()
+
+
+router.register('products', ProductViewSet)
+router.register('products/(?P<product_id>\d+)/reviews', ReviewViewSet)
+router.register('favorite-products', FavoriteProductViewSet)
+router.register('cart', CartViewSet)
+router.register('product-tags', ProductTagViewSet)
+router.register('products/(?P<product_id>\d+)/images', ProductImageViewSet)
+
+
 urlpatterns = [
-    path('products/', ProductListCreateView.as_view(), name='products'),
-    path('products/<int:pk>/', ProductListCreateView.as_view(), name='product', ),
-    path('reviews', ReviewViewSet.as_view(), name='reviews'),
-
-
-    path('favorite-products/', Favorite_product_view.as_view(), name='favorite-products'),
-    path('favorite-products/<int:pk>/', Favorite_product_view.as_view(), name='favorite-products'),
-
-    path('cart/', CartViewSet.as_view(), name='cart'),
-   
-   path('product-tags/', ProductTagListView.as_view(), name='tags'),
-
-   path('products/<int:product_id>/images/', ProductImageViewSet.as_view(), name='images'),
-   path('products/<int:product_id>/images/<int:pk>/', ProductImageViewSet.as_view(), name='images')
+    path('', include(router.urls)),
 ]
-
