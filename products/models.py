@@ -26,6 +26,9 @@ class Review(TimeStampdModel):
     content = models.TextField()
     rating = models.PositiveIntegerField(validators=[MaxValueValidator(5)])
 
+    class Meta:
+        unique_together = ['product', 'user']
+        
     def __str__(self):
         return f"{self.user} - {self.product} - {self.rating}"
 
@@ -49,3 +52,15 @@ class ProductImage(TimeStampdModel):
 
     def __str__(self):
         return f"Image {self.product}"
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='cart_items', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    price_at_time_of_addition = models.FloatField()
+
+    def __str__(self):
+        return f"{self.product.name} - {self.quantity} items"
+    
+    def total_price(self):
+        return self.quantity * self.price_at_time_of_addition
